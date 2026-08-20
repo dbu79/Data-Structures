@@ -34,8 +34,19 @@ class Vector{
             data[size++] = value;
         }
         
+        void PopBack(){
+            
+            size--; 
+        }
+
         const T& operator[](size_t index) const{
             return data[index];
+        }
+
+        void Clear(){
+            delete[] data;
+            size = 0; 
+            capacity = 0;
         }
 
         T& operator[](size_t index){
@@ -44,6 +55,10 @@ class Vector{
 
         size_t Size() const {
             return size; 
+        }
+
+        size_t Capacity() const {
+            return capacity;
         }
 };
 
@@ -61,6 +76,7 @@ int main() {
     vector.PushBack(1);
     vector.PushBack(1);
     vector.PushBack(1);
-
-    PrintVec(vector);
+    vector.PopBack();
+    std::cout << vector.Size() << std::endl;
+    std::cout << vector.Capacity();
 }
