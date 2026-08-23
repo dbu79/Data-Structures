@@ -1,4 +1,5 @@
 #include <iostream>
+#include <new>
 
 template <typename T> 
 
@@ -8,35 +9,50 @@ class Vector{
         size_t size = 0; 
         size_t capacity = 0;
         
-        void ReAlloc(size_t newCapacity){
+        void Alloc(size_t newCapacity){
 
-            T* newBlock = new T[newCapacity];
-
-            if (newCapacity <= size)
-                size = newCapacity;
+            void* rawBlock = operator new(newCapacity * sizeof(T));
             
+            T* newBlock = static_cast<T*>(rawBlock); 
+
             for (size_t i{}; i < size; i++){
-                newBlock[i] = data[i];
+                new (&newBlock[i]) T(std::move(data[i]));
+                data[i].~T();
             }
-            delete[] data;
+            
+            operator delete(data);
             data = newBlock;
             capacity = newCapacity;
         }
     public: 
+        // Constructor 
         Vector(){
         }
 
+        // Destructor
+        ~Vector(){
+            for (size_t i{}; i < size; i++){
+                data[i].~T();
+            }
+            operator delete(data);
+        }
+        
+        // Copy Constructor
+        //
+        //
         void PushBack(const T& value){
             if(size >= capacity){
-                ReAlloc(capacity == 0 ? 2 : capacity + capacity / 2);
+                Alloc(capacity == 0 ? 2 : capacity + capacity / 2);
             }
-
-            data[size++] = value;
+            
+            new(&data[size++]) T(value);
         }
         
         void PopBack(){
-            
-            size--; 
+            if (size != 0){
+                size--; 
+                data[size].~T();
+            }
         }
 
         const T& operator[](size_t index) const{
@@ -44,9 +60,10 @@ class Vector{
         }
 
         void Clear(){
-            delete[] data;
-            size = 0; 
-            capacity = 0;
+            for (size_t i{}; i < size; i++){
+                data[i].~T();
+            }
+            size = 0;
         }
 
         T& operator[](size_t index){
@@ -71,12 +88,6 @@ void PrintVec(const Vector<T>& vector){
 
 int main() {
     Vector<int> vector;
-    vector.PushBack(2);
-    vector.PushBack(1);
-    vector.PushBack(1);
-    vector.PushBack(1);
-    vector.PushBack(1);
-    vector.PopBack();
-    std::cout << vector.Size() << std::endl;
-    std::cout << vector.Capacity();
+    // std::cout << vector.Size() << std::endl;
+    // std::cout << vector.Capacity();
 }
