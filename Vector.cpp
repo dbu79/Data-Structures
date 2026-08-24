@@ -10,10 +10,8 @@ class Vector{
         size_t capacity = 0;
         
         void Alloc(size_t newCapacity){
-
-            void* rawBlock = operator new(newCapacity * sizeof(T));
             
-            T* newBlock = static_cast<T*>(rawBlock); 
+            T* newBlock = static_cast<T*>(operator new(newCapacity * sizeof(T))); 
 
             for (size_t i{}; i < size; i++){
                 new (&newBlock[i]) T(std::move(data[i]));
@@ -38,8 +36,14 @@ class Vector{
         }
         
         // Copy Constructor
-        //
-        //
+        Vector(const Vector& other)
+            : size(other.size), capacity(other.capacity){
+                data = static_cast<T*>(operator new(capacity * sizeof(T)));
+                for (size_t i{}; i < size;  i++){
+                    new (data + i) T(other.data[i]);
+                }
+            }
+            
         void PushBack(const T& value){
             if(size >= capacity){
                 Alloc(capacity == 0 ? 2 : capacity + capacity / 2);
