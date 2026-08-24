@@ -1,6 +1,6 @@
 #include <iostream>
-#include <iterator>
 #include <new>
+#include <stdexcept>
 
 template <typename T> 
 
@@ -85,6 +85,10 @@ class Vector{
                 data = other.data;
                 size = other.size;
                 capacity = other.capacity;
+
+                other.data = nullptr;
+                other.size = 0;
+                other.capacity = 0;
             }
             return *this;
         }
@@ -104,6 +108,14 @@ class Vector{
         }
 
         const T& operator[](size_t index) const{
+            if (index > size)
+                throw(std::out_of_range("Vector index out of range"));
+            return data[index];
+        }
+
+        T& operator[](size_t index){
+            if (index > size) 
+                throw(std::out_of_range("Vector index of out range"));
             return data[index];
         }
 
@@ -114,9 +126,6 @@ class Vector{
             size = 0;
         }
 
-        T& operator[](size_t index){
-            return data[index];
-        }
 
         size_t Size() const {
             return size; 
@@ -149,3 +158,5 @@ int main() {
     Vector<int> vector2 = std::move(vector);
     vector3 = std::move(vector);
 }
+
+
