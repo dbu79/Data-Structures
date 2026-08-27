@@ -21,15 +21,42 @@ class LinkedList{
     public:
         LinkedList(){};
         ~LinkedList(){
-            Node* current = head;
+            Clear();
+        };
+        
+        LinkedList(const LinkedList& other){
+            Node* current = other.head;
+            while (current != nullptr){
+                PushBack(current->data);
+                current = current->next;
+            }
+        }
+        
+        LinkedList& operator = (const LinkedList& other){
+            if (this != &other){
+                Clear();
+
+                Node* current = other.head;
+                while (current != nullptr){
+                    PushBack(current->data);
+                    current = current->next;
+                }
+            }
+            return *this;
+        }
+
+
+        void Clear(){
+            Node* current = head; 
             while (current != nullptr){
                 Node* temp = current->next;
-                delete current; 
-                current = temp;
-                size--;
+                delete current;
+                current = temp; 
             }
-        };
-
+            size = 0; 
+            head = tail = nullptr;
+        }
+            
         void PushBack(const T& value){
             Node* newNode = new Node(value);
 
@@ -110,7 +137,7 @@ int main(){
     LinkedList<int> list; 
 
     list.PushBack(1);
-    list.PopBack();
+    list.PushBack(2);
     list.PrintList();
     return 0;
 }
