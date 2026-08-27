@@ -1,6 +1,5 @@
 #include <iostream>
 #include <cstddef>
-#include <iterator>
 
 
 template <typename T>
@@ -22,6 +21,13 @@ class LinkedList{
     public:
         LinkedList(){};
         ~LinkedList(){
+            Node* current = head;
+            while (current != nullptr){
+                Node* temp = current->next;
+                delete current; 
+                current = temp;
+                size--;
+            }
         };
 
         void PushBack(const T& value){
