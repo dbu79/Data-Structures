@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <iostream>
 #include <cstddef>
 
@@ -44,7 +45,26 @@ class LinkedList{
             }
             return *this;
         }
+        
+        LinkedList(LinkedList&& other) noexcept
+            : head(other.head), tail(other.tail), size(other.size){
+                other.head = other.tail = nullptr; 
+                other.size = 0;
+            }
 
+        LinkedList& operator = (LinkedList&& other) noexcept {
+            if (this != &other){
+                Clear();
+                head = other.head; 
+                tail = other.tail;
+                size = other.size;
+                
+                other.head = nullptr; 
+                other.tail = nullptr;
+                other.size = 0;
+            }
+            return *this; 
+        }
 
         void Clear(){
             Node* current = head; 
@@ -73,7 +93,6 @@ class LinkedList{
         void PushFront(const T& value){
             Node* newNode = new Node(value);
 
-            Node* current = tail;
             if (head == nullptr){
                 head = tail = newNode;
             } else {
@@ -117,13 +136,22 @@ class LinkedList{
                 size--;
             }
         }
+        
+        void Insert(size_t pos, T value){
+            Node* current = head; 
+            for (size_t i{}; i < pos;i++){
+                current = current->next;
+            }
+
+            
+        }
 
         size_t Size() const {
             return size;
         }
 
 
-    void PrintList(){
+    void const PrintList(){
         Node* current = head; 
         while (current != nullptr){
             std::cout << current->data << " "; 
